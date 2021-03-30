@@ -1,0 +1,107 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AdminLTE 3 | Dashboard 2</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="{% static  'dataTables.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static  'responsive.bootstrap4.min.css' %}">
+    <link rel="stylesheet" href="{% static  'buttons.bootstrap4.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static  'adminlte.min.css' %}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="{% static  'all.min.css' %}">
+    <!-- overlayScrollbars -->
+    <link rel="stylesheet" href="{% static  'OverlayScrollbars.min.css' %}">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="{% static  'adminlte.min.css' %}">
+
+</head>
+
+<body class="hold-transition dark-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+
+    <h2 class="text-capitalize text-center">Administrator</h2>
+    {% if messages %}
+
+    {% for message in messages %}
+
+
+    <div class="alert alert-warning alert-dismissible fade show">
+        <strong>*</strong> {{ message }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if frm.errors %}
+
+    {% for field in frm %}
+    {% for error in field.errors %}
+    <div class="alert alert-warning alert-dismissible fade show">
+        <strong>*</strong> {{ error }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+    {% endfor %}
+    {% for error in frm.non_field_errors %}
+    <div class="alert alert-warning alert-dismissible fade show">
+        <strong>*</strong> {{ error }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+
+    {% endif %}
+    <div class="wrapper" style="margin-top:100px; padding-left:20px;padding-right:20px;">
+        <div class="card card-primary">
+            <div class="card-header">
+                <h3 class="card-title">Admin Login</h3>
+            </div>
+            <!-- /.card-header -->
+            <!-- form start -->
+            <form action="" method='post'>
+                {% csrf_token %}
+                <div class="card-body">
+                    <div class="form-group">
+                       {{ frm.Username }}
+                    </div>
+                    <div class="form-group">
+                        {{ frm.Password }}
+                    </div>
+
+                </div>
+                <!-- /.card-body -->
+
+                <div class="card-footer">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+        </div>
+
+
+    </div>
+    <!-- REQUIRED SCRIPTS -->
+    <!-- jQuery -->
+    <script src="{% static  'jquery.min.js' %}"></script>
+    <!-- Bootstrap -->
+    <script src="{% static  'bootstrap.bundle.min.js' %}"></script>
+    <!-- overlayScrollbars -->
+    <script src="{% static  'jquery.overlayScrollbars.min.js' %}"></script>
+    <!-- AdminLTE App -->
+    <script src="{% static  'adminlte.js' %}"></script>
+
+    <!-- PAGE PLUGINS -->
+    <!-- jQuery Mapael -->
+    <script src="{% static  'jquery.mousewheel.js' %}"></script>
+    <script src="{% static  'raphael.min.js' %}"></script>
+    <script src="{% static  'jquery.mapael.min.js' %}"></script>
+
+
+
+</body>
+
+</html>

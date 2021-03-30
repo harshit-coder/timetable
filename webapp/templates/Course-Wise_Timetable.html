@@ -1,0 +1,151 @@
+{% extends "Homepage.html" %} {% load static %} {% block content %}
+
+<br>
+ <h4 class="text-center">COURSE-WISE TIME TABLE</h4>
+{% if messages %}
+
+{% for message in messages %}
+
+
+<div class="alert alert-warning alert-dismissible fade show">
+    <strong>*</strong> {{ message }}
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+</div>
+{% endfor %}
+{% endif %}
+ <p class="text-left ">Course - {{ cv }}</p>
+
+<p class="text-left  ">Semester - {{ sm }}</p>
+<div class="card">
+<div class="card-body table-responsive p-0">
+ <table id="as" class="table  text-nowrap ">
+      <thead>
+	     <tr>
+      <th align="center" >Period</th>
+      <th align="center">1ST</th>
+      <th align="center" >2ND</th>
+      <th align="center" >3RD</th>
+		 <th align="center" >4TH</th>
+      <th align="center" >5TH</th>
+      <th align="center">6TH</th>
+		 <th align="center">7TH</th>
+      <th align="center">8TH</th>
+      <th align="center">9TH</th>
+    </tr>
+           <tr>
+      <th scope="col">Days/Time</th>
+             {% for id,value in tg %}
+      <th align="center">{{ value }}</th>
+
+             {% endfor %}
+    </tr>
+
+  </thead>
+<tbody>
+
+     {% for m in matrix %}
+     <tr>
+         {% for k in m %}
+
+         {% if forloop.counter == 1 %}
+         <th align="center" scope="col" height="30">{{ k }}</th>
+
+         {% elif k == ' ' %}
+         <td align="center" scope="col" height="30"> </td>
+        {% else %}
+         <td align="center" scope="col" height="30">
+              {% for f in k %}
+
+             <small><b>Course: </b>{{ f.paper_name1 }}</small><br><small><b>Room: </b>{{ f.room1 }}</small> <br> <small>
+             <b>Faculty: </b>{{ f.faculty_name1 }}({{ f.faculty_name1.faculty_code }})  {% if f.faculty_name2 %} , {{ f.faculty_name2 }}({{ f.faculty_name2.faculty_code }}) {% else %}{% endif %} </small><br>
+             <small><b>Lecture: </b>{{ f.Lecture_type }}</small>  <small><b>Section: </b>{{ f.section_type }} </small><br>
+
+              {% endfor %}
+           {% endif %}
+         {% endfor %}
+
+     </tr>
+     {% endfor%}
+</tbody>
+
+ </table>
+    </div>
+</div>
+<input class=" btn  my-3" style="background-color: blue; color:white; font-size:20px;" type="button" id="btnExport" value="Download"/>
+
+
+<script>
+
+
+        var wb = XLSX.utils.table_to_book(document.getElementById('as'), {sheet:"Sheet JS"});
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        function s2ab(s) {
+                        var buf = new ArrayBuffer(s.length);
+                        var view = new Uint8Array(buf);
+                        for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                        return buf;
+        }
+        $("#btnExport").click(function(){
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '{{ cv }}{{ sm }}.xlsx');
+        });
+
+</script>
+
+    <script>
+        var table = $("table");
+        var tbody = table.find($("tbody"));
+        var rows = tbody.find($("tr"));
+        var colsLength = $(rows[0]).find($("td")).length;
+        var count = 0
+        var flag = 0
+        var removeLater = new Array();
+        for (var i = 0; i < rows.length; i++) {
+            console.log(count)
+
+            count = 0
+            var startIndex = 0;
+            var lastIndex = 0;
+            var startText = $($(rows[i]).find("td")[0]).text();
+
+            for (var j = 1; j < colsLength; j++) {
+                var cRow = $(rows[i]);
+                var cCol = $(cRow.find("td")[j]);
+                var currentText = cCol.text();
+
+
+                if (currentText == startText) {
+
+                    cCol.css("background", "gray");
+                    console.log(cCol);
+
+                    removeLater.push(cCol);
+                    lastIndex = j;
+                    var spanLength = lastIndex - startIndex;
+                    if (spanLength >= 1) {
+
+                        $($(rows[i]).find("td")[startIndex]).attr("colspan", spanLength + 1);
+                    }
+
+                } else {
+                    var spanLength = lastIndex - startIndex;
+                    if (spanLength >= 1) {
+
+
+                        $($(rows[i]).find("td")[startIndex]).attr("colspan", spanLength + 1);
+                    }
+                    lastIndex = j;
+                    startIndex = j;
+                    startText = currentText;
+                }
+
+            }
+
+
+        }
+
+        for (var i in removeLater) {
+            $(removeLater[i]).remove();
+        }
+    </script>
+
+{% endblock %}

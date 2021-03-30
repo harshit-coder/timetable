@@ -1,0 +1,239 @@
+   {% extends "Admin-Panel.html" %} {% load static %} {% block content %}
+
+<div class="content-wrapper">
+    {% if messages %}
+
+    {% for message in messages %}
+
+
+    <div class="alert alert-warning alert-dismissible fade show">
+        <strong>*</strong> {{ message }}
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+    </div>
+    {% endfor %}
+    {% endif %}
+            <!-- Content Header (Page header) -->
+            <div class="content-header">
+                <div class="container-fluid">
+                    <div class="col-md-12">
+                        <!-- Info Boxes Style 2 -->
+                        <div class="info-box mb-3 bg-warning">
+                            <span class="info-box-icon"><i class="fas fa-calendar-plus"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Current Academic Year</span>
+                                {% for f in a %}
+                                {% if f.show == True %}
+                                <span class="info-box-number">{{ f.academic_year }}</span>
+                                {% endif %}
+                                {% endfor %}
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+                        <!-- /.info-box -->
+                        <div class="info-box mb-3 bg-success">
+                            <span class="info-box-icon"><i class="fa fa-book-open"></i></span>
+
+                            <div class="info-box-content">
+                                <span class="info-box-text">Currently Running Semester</span>
+                                <span class="info-box-number">{% for d in s %} {% if d.show1 == True %}{{ d.semester }} , {% endif %}{% endfor %} </span>
+                            </div>
+                            <!-- /.info-box-content -->
+                        </div>
+
+
+                    </div>
+                    <div class="row mb-2">
+
+
+
+                    </div>
+                    <!-- /.row -->
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- /.content-header -->
+
+            <!-- Main content -->
+            <section class="content">
+                <div class="container-fluid">
+                    <!-- Info boxes -->
+
+
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="card-title">Created:</h5>
+
+                                </div>
+                                <!-- /.card-header -->
+                                <div class="card-body">
+                                    <div class="row">
+
+                                        <div class="col-md-12">
+
+                                                     <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+
+                                <!-- /.card-header -->
+                                <div class="card-body table-responsive p-0">
+                                    <table id="as"  class="table table-hover text-nowrap table-bordered">
+                                        <thead>
+
+                                       	     <tr>
+      <th>Period</th>
+      <th>1ST</th>
+      <th>2ND</th>
+      <th>3RD</th>
+		 <th>4TH</th>
+      <th>5TH</th>
+      <th>6TH</th>
+		 <th>7TH</th>
+      <th>8TH</th>
+      <th>9TH</th>
+    </tr>
+                                         <tr>
+      <th>Days/Time</th>
+             {% for id,value in tg %}
+      <th>{{ value }}</th>
+
+             {% endfor %}
+    </tr>
+
+
+
+                                        </thead>
+                                        <tbody>
+
+   {% for m in matrix %}
+     <tr>
+         {% for k in m %}
+
+         {% if forloop.counter == 1 %}
+         <th>{{ k }}</th>
+
+         {% elif k == ' ' %}
+         <td> </td>
+        {% else %}
+         <td>
+              {% for f in k %}
+             <p>
+                 <small>{{ f.paper_name1 }}</small>  --  <small>{{ f.room1 }}  </small> -- <small>
+               {{ f.faculty_name1 }}({{ f.faculty_name1.faculty_code }})  {% if f.faculty_name2 %}--{{ f.faculty_name2 }}({{ f.faculty_name2.faculty_code }}) {% else %}{% endif %} </small>
+          <small>--{{ f.Lecture_type }}</small> -- <small>{{ f.section_type }} </small>
+             </p>
+
+
+
+              {% endfor %}
+           {% endif %}
+         {% endfor %}
+
+     </tr>
+     {% endfor%}
+                                        </tbody>
+                                    </table>
+
+                                    <input class=" btn mx-3 my-3" style="background-color: blue; color:white; font-size:20px;" type="button" id="btnExport" value="Download"/>
+
+
+    <script>
+
+        var wb = XLSX.utils.table_to_book(document.getElementById('as'), {sheet:"Sheet JS"});
+        var wbout = XLSX.write(wb, {bookType:'xlsx', bookSST:true, type: 'binary'});
+        function s2ab(s) {
+                        var buf = new ArrayBuffer(s.length);
+                        var view = new Uint8Array(buf);
+                        for (var i=0; i<s.length; i++) view[i] = s.charCodeAt(i) & 0xFF;
+                        return buf;
+        }
+        $("#btnExport").click(function(){
+        saveAs(new Blob([s2ab(wbout)],{type:"application/octet-stream"}), '{{ tble1.course_name }}{{ tble1.sem1 }}.xlsx');
+        });
+
+
+        var table = $("table");
+        var tbody = table.find($("tbody"));
+        var rows = tbody.find($("tr"));
+        var colsLength = $(rows[0]).find($("td")).length;
+        var count = 0
+        var flag = 0
+        var removeLater = new Array();
+        for (var i = 0; i < rows.length; i++) {
+            console.log(count)
+
+            count = 0
+            var startIndex = 0;
+            var lastIndex = 0;
+            var startText = $($(rows[i]).find("td")[0]).text();
+
+            for (var j = 1; j < colsLength; j++) {
+                var cRow = $(rows[i]);
+                var cCol = $(cRow.find("td")[j]);
+                var currentText = cCol.text();
+
+
+                if (currentText == startText) {
+
+                    cCol.css("background", "gray");
+                    console.log(cCol);
+
+                    removeLater.push(cCol);
+                    lastIndex = j;
+                    var spanLength = lastIndex - startIndex;
+                    if (spanLength >= 1) {
+
+                        $($(rows[i]).find("td")[startIndex]).attr("colspan", spanLength + 1);
+                    }
+
+                } else {
+                    var spanLength = lastIndex - startIndex;
+                    if (spanLength >= 1) {
+
+
+                        $($(rows[i]).find("td")[startIndex]).attr("colspan", spanLength + 1);
+                    }
+                    lastIndex = j;
+                    startIndex = j;
+                    startText = currentText;
+                }
+
+            }
+
+
+        }
+
+        for (var i in removeLater) {
+            $(removeLater[i]).remove();
+        }
+    </script>
+                                </div>
+                                <!-- /.card-body -->
+                            </div>
+                            <!-- /.card -->
+                        </div>
+
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+
+
+                                        </div>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+   {% endblock %}
